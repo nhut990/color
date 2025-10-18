@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Vòng Tròn Chọn Màu</title>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin-top: 40px;}
+    #color-wheel { touch-action: none; }
+    #color-info { margin-top: 20px; font-size: 1.3em; display: flex; align-items: center;}
+    #copy-btn { margin-left: 10px; padding: 6px 16px; font-size: 1em; cursor: pointer; }
+    #marker { position: absolute; width: 18px; height: 18px; border: 2px solid #fff; border-radius: 50%; pointer-events: none; box-shadow: 0 0 8px #0008;}
+    .wheel-wrapper { position: relative; display: inline-block;}
+    #sample-color {
+      width: 80px; height: 80px;
+      border-radius: 14px;
+      border: 2px solid #888;
+      margin-left: 28px;
+      box-shadow: 0 0 18px #aaa;
+      background: #fff;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    #color-name {
+      margin-left: 22px;
+      font-weight: bold;
+      font-size: 1.15em;
+      min-width: 150px;
+    }
+    .footer-link {
+      margin-top: 60px;
+      font-size: 1.15em;
+    }
+    .created-by {
+      margin-top: 10px;
+      margin-bottom: 18px;
+      color: #666;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h2>Vòng Tròn Chọn Màu</h2>
+  <div>Chọn vào vòng tròn để xem mã màu</div>
+  <div class="wheel-wrapper">
+    <canvas id="color-wheel" width="600" height="600"></canvas>
+    <div id="marker" style="display:none"></div>
+  </div>
+  <div id="color-info">
+    Mã màu: <span id="color-code">#FFFFFF</span>
+    <button id="copy-btn">Copy</button>
+    <div id="color-name">Màu trắng</div>
+    <div id="sample-color"></div>
+  </div>
+  <div class="footer-link">
+    <a href="https://nhut990.github.io/">Quay về trang chủ</a>
+  </div>
+  <div class="created-by">
+    Created by Minh Nhựt
+  </div>
+  <script>
+    const canvas = document.getElementById('color-wheel');
+    const ctx = canvas.getContext('2d');
+    const marker = document.getElementById('marker');
+    const colorCodeSpan = document.getElementById('color-code');
+    const copyBtn = document.getElementById('copy-btn');
+    const sampleColorDiv = document.getElementById('sample-color');
+    const colorNameDiv = document.getElementById('color-name');
+    const wheelRadius = canvas.width/2 - 18;
+    const wheelCenter = {x: canvas.width/2, y: canvas.height/2};
+
+    // Vẽ bánh xe màu
+    function drawColorWheel() {
+      for (let angle = 0; angle < 360; angle += 1) {
+        const startRad = (angle-1) * Math.PI/180;
+        const endRad = angle * Math.PI/180;
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(wheelCenter.x, wheelCenter.y);
+        ctx.arc(wheelCenter.x, wheelCenter.y, wheelRadius, startRad, endRad, false);
+        ctx.closePath();
+        ctx.clip();
+
+        // Gradient từ tâm ra viền
+        const grad = ctx.createRadialGradient(wheelCenter.x, wheelCenter.y, 0, wheelCenter.x, wheelCenter.y, wheelRadius);
+        grad.addColorStop(0, 'white');
+        grad.addColorStop(1, `hsl(${angle}, 100%, 50%)`);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.restore();
+      }
+    }
+    drawColorWheel();
+
+    // Lấy màu tại vị trí chọn
+    function getColorAtPosition(x, y) {
+      const dx = x - wheelCenter.x;
+      const dy = y - wheelCenter.y;
+      const r = Math.sqrt(dx*dx + dy*dy);
+      if (r > wheelRadius) return null; // Ngoài bánh xe
+
+      // Hue
+      let angle = Math.atan2(dy, dx) * 180/Math.PI;
+      if (angle < 0) angle += 360;
+      // Saturation
+      let sat = r/wheelRadius;
+      // Lightness
+      let light = 0.5;
+      const color = hslToHex(angle, sat, light);
+      return { hex: color, h: angle, s: sat, l: light };
+    }
+
+    // Chuyển HSL sang HEX
+    function hslToHex(h, s, l) {
+      s = Math.min(1, Math.max(0, s));
+      l = Math.min(1, Math.max(0, l));
+      h = h/360;
+      let r, g, b;
+      if (s === 0) r = g = b = l;
+      else {
+        function hue2rgb(p, q, t) {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q-p)*6*t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q-p)*(2/3-t)*6;
+          return p;
+        }
+        const q = l < 0.5 ? l*(1+s) : l+s-l*s;
+        const p = 2*l - q;
+        r = hue2rgb(p, q, h+1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h-1/3);
+      }
+      return "#" + [r,g,b].map(x => Math.round(x*255).toString(16).padStart(2,"0")).join("");
+    }
+
+    // Nhận diện tên màu chi tiết tiếng Việt
+    function getVietnameseColorName(h,s,l) {
+      // Độ sáng và bão hòa
+      if (l > 0.92) return "Màu trắng";
+      if (l < 0.10) return "Màu đen";
+      if (s < 0.15 && l > 0.15 && l < 0.85) return "Màu xám";
+      if (l > 0.85 && h > 40 && h < 65) return "Màu kem"; // vàng nhạt
+
+      // Hue chi tiết
+      if (h >= 0 && h < 10) return "Màu đỏ";
+      if (h >= 10 && h < 35) return "Màu cam";
+      if (h >= 35 && h < 55) return "Màu vàng";
+      if (h >= 55 && h < 80) return "Màu vàng xanh";
+      if (h >= 80 && h < 140) return "Màu xanh lá cây";
+      if (h >= 140 && h < 170) return "Màu xanh lục";
+      if (h >= 170 && h < 190) {
+        if (l > 0.6) return "Xanh bạc hà";
+        return "Màu xanh lục";
+      }
+      if (h >= 190 && h < 210) {
+        if (l > 0.7) return "Xanh da trời";
+        if (l > 0.45) return "Xanh nước biển";
+        return "Xanh lam nhạt";
+      }
+      if (h >= 210 && h < 240) {
+        if (l > 0.5) return "Xanh da trời";
+        return "Màu xanh lam";
+      }
+      if (h >= 240 && h < 265) return "Màu xanh tím";
+      if (h >= 265 && h < 290) return "Màu tím";
+      if (h >= 290 && h < 320) return "Màu hồng";
+      if (h >= 320 && h < 350) return "Màu đỏ hồng";
+      if (h >= 350 && h < 360) return "Màu đỏ";
+
+      // Bổ sung nhận diện màu nâu
+      if ((h >= 20 && h < 60) && l < 0.45 && s > 0.35) return "Màu nâu";
+
+      return "Màu không xác định";
+    }
+
+    function showColorAt(x, y) {
+      const colorData = getColorAtPosition(x, y);
+      if (!colorData) return;
+      colorCodeSpan.textContent = colorData.hex;
+      marker.style.display = "block";
+      marker.style.left = (canvas.offsetLeft + x - 9) + "px";
+      marker.style.top = (canvas.offsetTop + y - 9) + "px";
+      marker.style.background = colorData.hex;
+      sampleColorDiv.style.background = colorData.hex;
+      colorNameDiv.textContent = getVietnameseColorName(colorData.h, colorData.s, colorData.l);
+    }
+
+    function handleSelection(e) {
+      let rect = canvas.getBoundingClientRect();
+      let x, y;
+      if (e.touches) {
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+      } else {
+        x = e.offsetX;
+        y = e.offsetY;
+      }
+      const colorData = getColorAtPosition(x, y);
+      if (colorData) showColorAt(x, y);
+    }
+
+    canvas.addEventListener('mousedown', function(e){
+      handleSelection(e);
+      canvas.addEventListener('mousemove', handleSelection);
+    });
+    canvas.addEventListener('mouseup', function(){canvas.removeEventListener('mousemove', handleSelection);});
+    canvas.addEventListener('mouseleave', function(){canvas.removeEventListener('mousemove', handleSelection);});
+    canvas.addEventListener('touchstart', function(e){handleSelection(e);});
+    canvas.addEventListener('touchmove', function(e){handleSelection(e); e.preventDefault();});
+
+    copyBtn.onclick = function() {
+      const color = colorCodeSpan.textContent;
+      navigator.clipboard.writeText(color);
+      copyBtn.textContent = "Đã copy!";
+      setTimeout(()=>copyBtn.textContent="Copy", 1200);
+    };
+  </script>
+</body>
+</html>
