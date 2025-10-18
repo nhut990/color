@@ -177,36 +177,39 @@
       return {r, g, b};
     }
 
-    function getVietnameseColorName(h,s,l) {
+    // Phân biệt dải màu chính xác kiểu Việt Nam  
+    function getVietnameseColorName(h, s, l) {
       if (l > 0.92) return "Màu trắng";
       if (l < 0.10) return "Màu đen";
       if (s < 0.15 && l > 0.15 && l < 0.85) return "Màu xám";
       if (l > 0.85 && h > 40 && h < 65) return "Màu kem";
-      if (h >= 0 && h < 10) return "Màu đỏ";
-      if (h >= 10 && h < 35) return "Màu cam";
-      if (h >= 35 && h < 55) return "Màu vàng";
-      if (h >= 55 && h < 80) return "Màu vàng xanh";
-      if (h >= 80 && h < 140) return "Màu xanh lá cây";
-      if (h >= 140 && h < 170) return "Màu xanh lục";
-      if (h >= 170 && h < 190) {
-        if (l > 0.6) return "Xanh bạc hà";
-        return "Màu xanh lục";
-      }
-      if (h >= 190 && h < 210) {
-        if (l > 0.7) return "Xanh da trời";
-        if (l > 0.45) return "Xanh nước biển";
-        return "Xanh lam nhạt";
-      }
-      if (h >= 210 && h < 240) {
-        if (l > 0.5) return "Xanh da trời";
-        return "Màu xanh lam";
-      }
-      if (h >= 240 && h < 265) return "Màu xanh tím";
-      if (h >= 265 && h < 290) return "Màu tím";
-      if (h >= 290 && h < 320) return "Màu hồng";
-      if (h >= 320 && h < 350) return "Màu đỏ hồng";
-      if (h >= 350 && h < 360) return "Màu đỏ";
+      // Nâu, vàng
       if ((h >= 20 && h < 60) && l < 0.45 && s > 0.35) return "Màu nâu";
+      if (h >= 0 && h < 10) return "Màu đỏ";
+      if (h >= 10 && h < 30) return "Màu cam";
+      if (h >= 30 && h < 50) return "Màu vàng";
+      if (h >= 50 && h < 80) return "Vàng xanh (vàng chanh)";
+      // Xanh lá cây
+      if (h >= 80 && h < 140) return "Màu xanh lá cây";
+      // Xanh lá mạ
+      if (h >= 140 && h < 165) return "Xanh lá mạ";
+      // Xanh ngọc
+      if (h >= 165 && h < 180) return "Xanh ngọc";
+      // Xanh ngọc bích
+      if (h >= 180 && h < 200) return "Xanh ngọc bích";
+      // Xanh da trời
+      if (h >= 200 && h < 215) return "Xanh da trời";
+      // Xanh lam
+      if (h >= 215 && h < 240) return "Xanh lam";
+      // Xanh navy
+      if (h >= 240 && h < 260) return "Xanh navy";
+      // Tím
+      if (h >= 260 && h < 280) return "Màu tím";
+      // Hồng
+      if (h >= 280 && h < 320) return "Màu hồng";
+      // Đỏ hồng
+      if (h >= 320 && h < 345) return "Đỏ hồng";
+      if (h >= 345 && h < 360) return "Màu đỏ";
       return "Màu không xác định";
     }
 
