@@ -106,7 +106,6 @@
       - Thông số <b>R, G, B</b> là giá trị màu Đỏ, Xanh Lá, Xanh Dương theo hệ màu RGB, nằm trong khoảng từ <b>0</b> đến <b>255</b>.<br>
       - Phần trăm (%) bên cạnh là tỉ lệ mỗi kênh màu so với giá trị tối đa (255), giúp bạn ước lượng khi pha chế hoặc phối màu.<br>
       - Ví dụ: <b>R:128 (50%)</b> nghĩa là thành phần màu đỏ chiếm 50% cường độ tối đa.<br>
-      - Tỉ lệ này rất hữu ích khi bạn cần pha màu theo công thức hoặc phối hợp màu sắc chuẩn xác.
     </div>
   </div>
   <div class="footer-link">
@@ -179,41 +178,29 @@
 
     // Nhận diện tên màu tiếng Việt hợp lý nhất theo Hue HSL
     function getVietnameseColorName(h, s, l) {
-      // Các màu đơn sắc
       if (l >= 0.95) return "Màu trắng";
       if (l <= 0.10) return "Màu đen";
       if (s <= 0.12 && l > 0.10 && l < 0.88) return "Màu xám";
       if (l >= 0.88 && h >= 40 && h <= 70) return "Màu kem";
-      // Nâu (brown/be, nâu đỏ đậm)
       if ((h >= 20 && h < 45) && l < 0.54 && s > 0.25) return "Màu nâu";
       if ((h >= 45 && h < 55) && l < 0.54 && s > 0.23) return "Màu vàng nâu";
       if ((h >= 18 && h < 45) && l >= 0.54 && l < 0.80 && s < 0.32) return "Màu be";
-      // Đỏ
       if ((h >= 0 && h < 13) || (h >= 347 && h <= 360)) return "Màu đỏ";
-      // Cam
       if (h >= 13 && h < 30) return "Màu cam đỏ";
       if (h >= 30 && h < 45) return "Màu cam";
-      // Vàng các loại
       if (h >= 45 && h < 54) return "Vàng cam";
-      if (h >= 54 && h <= 66) return "Màu vàng"; // #ffff00 là hue=60
+      if (h >= 54 && h <= 66) return "Màu vàng";
       if (h > 66 && h <= 80) return "Vàng chanh";
-      // Xanh lá các sắc độ
       if (h > 80 && h <= 140) return "Xanh lá cây";
       if (h > 140 && h <= 166) return "Xanh lục";
-      // Xanh ngọc, cyan
       if (h > 166 && h <= 185) return "Xanh ngọc";
       if (h > 185 && h <= 195) return "Xanh cyan";
-      // Xanh nước biển, da trời
       if (h > 195 && h <= 210) return "Xanh nước biển";
       if (h > 210 && h <= 225) return "Xanh da trời";
-      // Xanh lam
       if (h > 225 && h <= 245) return "Xanh lam";
-      // Navy
       if (h > 245 && h <= 260) return "Xanh navy";
-      // Tím các loại
       if (h > 260 && h <= 280) return "Màu tím";
       if (h > 280 && h <= 295) return "Tím hồng";
-      // Hồng, đỏ hồng
       if (h > 295 && h <= 320) return "Màu hồng";
       if (h > 320 && h < 347) return "Đỏ hồng";
       return "Màu không xác định";
@@ -227,7 +214,9 @@
       const colorData = getColorAtPosition(x);
       colorCodeSpan.textContent = colorData.hex;
       marker.style.display = "block";
-      marker.style.left = (x-9) + "px";
+      // Đảm bảo marker không bị tràn biên
+      let markerLeft = Math.max(0, Math.min(x - 9, width - marker.offsetWidth));
+      marker.style.left = markerLeft + "px";
       marker.style.background = colorData.hex;
       sampleColorDiv.style.background = colorData.hex;
       colorNameDiv.textContent = getVietnameseColorName(colorData.h, colorData.s, colorData.l);
@@ -237,26 +226,46 @@
          <div><span class="rgb-label rgb-b">B:</span>${colorData.rgb.b} <span class="rgb-percent">(${percent(colorData.rgb.b)}%)</span></div>`;
     }
 
-    function handleSelection(e) {
+    function getXFromEvent(e) {
       let rect = canvas.getBoundingClientRect();
-      let x;
       if (e.touches) {
-        x = e.touches[0].clientX - rect.left;
-      } else {
-        x = e.offsetX;
+        return Math.max(0, Math.min(width-1, e.touches[0].clientX - rect.left));
+      } else if (typeof e.offsetX !== "undefined") {
+        return Math.max(0, Math.min(width-1, e.offsetX));
+      } else if (typeof e.clientX !== "undefined") {
+        return Math.max(0, Math.min(width-1, e.clientX - rect.left));
       }
-      x = Math.max(0, Math.min(width-1, x));
-      showColorAt(x);
+      return 0;
     }
 
-    canvas.addEventListener('mousedown', function(e){
-      handleSelection(e);
-      canvas.addEventListener('mousemove', handleSelection);
-    });
-    canvas.addEventListener('mouseup', function(){canvas.removeEventListener('mousemove', handleSelection);});
-    canvas.addEventListener('mouseleave', function(){canvas.removeEventListener('mousemove', handleSelection);});
-    canvas.addEventListener('touchstart', function(e){handleSelection(e);});
-    canvas.addEventListener('touchmove', function(e){handleSelection(e); e.preventDefault();});
+    let isDragging = false;
+
+    function handlePointerDown(e) {
+      isDragging = true;
+      handlePointerMove(e);
+      document.addEventListener('mousemove', handlePointerMove);
+      document.addEventListener('mouseup', handlePointerUp);
+      document.addEventListener('touchmove', handlePointerMove, {passive:false});
+      document.addEventListener('touchend', handlePointerUp);
+    }
+    function handlePointerMove(e) {
+      if(!isDragging && !(e.type=="mousemove"||e.type=="touchmove")) return;
+      let x = getXFromEvent(e);
+      showColorAt(x);
+      if (e.type === "touchmove") e.preventDefault();
+    }
+    function handlePointerUp() {
+      isDragging = false;
+      document.removeEventListener('mousemove', handlePointerMove);
+      document.removeEventListener('mouseup', handlePointerUp);
+      document.removeEventListener('touchmove', handlePointerMove);
+      document.removeEventListener('touchend', handlePointerUp);
+    }
+
+    canvas.addEventListener('mousedown', handlePointerDown);
+    canvas.addEventListener('touchstart', handlePointerDown, {passive:false});
+    // Cho phép chọn màu bằng click
+    canvas.addEventListener('click', function(e){ showColorAt(getXFromEvent(e)); });
 
     // Hiển thị màu mặc định ban đầu
     showColorAt(0);
