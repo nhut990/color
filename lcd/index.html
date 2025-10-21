@@ -150,11 +150,10 @@
       <ul>
         <li>Nhấn <strong>Bắt đầu test màn hình</strong> để bắt đầu kiểm tra.</li>
         <li>Bấm vào <strong>bất kỳ đâu trên màn hình</strong> để chuyển sang màu tiếp theo.</li>
-        <li>Có thể dùng nút <strong>Tiếp</strong> hoặc phím mũi tên phải để chuyển màu tiếp theo.</li>
-        <li>Dùng nút <strong>Trước</strong> hoặc phím mũi tên trái để quay lại màu trước.</li>
+        <li>Có thể dùng phím mũi tên phải để chuyển màu tiếp theo.</li>
+        <li>Dùng phím mũi tên trái để quay lại màu trước.</li>
         <li>Nhấn <strong>Toàn màn hình</strong> hoặc phím <strong>F</strong> để chuyển sang chế độ toàn màn hình.</li>
         <li>Mỗi màu giúp bạn kiểm tra điểm chết, vết đốm, v.v. trên màn hình.</li>
-        <li><strong>Lưu ý:</strong> Trình duyệt trên iPhone/iPad không hỗ trợ chế độ toàn màn hình. Nếu muốn trải nghiệm tốt nhất, hãy thêm trang này ra màn hình chính.</li>
       </ul>
     </div>
     <button id="startBtn">Bắt đầu test màn hình</button>
@@ -162,8 +161,6 @@
   <div id="colorName"></div>
   <div id="note">Bấm vào màn hình để chuyển màu tiếp theo</div>
   <div id="controls">
-    <button onclick="prevColor()">Trước</button>
-    <button onclick="nextColor()">Tiếp</button>
     <button onclick="toggleFullscreen()">Toàn màn hình</button>
   </div>
   <canvas id="colorBarTest"></canvas>
@@ -187,18 +184,9 @@
       const ctx = canvas.getContext("2d");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      // Dải màu đầu tiên là đỏ
       const barColors = [
-        "#ff0000", // Đỏ
-        "#f777e6", // hồng tím
-        "#f7f777", // vàng nhạt
-        "#8383f7", // xanh tím
-        "#7af77a", // xanh lá
-        "#f77a7a", // đỏ cam
-        "#228888", // xanh đậm
-        "#8a2288", // tím đậm
-        "#999922", // vàng đất
-        "#222288"  // xanh nước biển đậm
+        "#ff0000", "#f777e6", "#f7f777", "#8383f7", "#7af77a",
+        "#f77a7a", "#228888", "#8a2288", "#999922", "#222288"
       ];
       let barHeight = canvas.height / barColors.length;
       for (let i = 0; i < barColors.length; i++) {
@@ -265,7 +253,6 @@
       startTest();
     };
 
-    // Nhấn phím để điều khiển
     window.addEventListener("keydown", function(e) {
       if (!started) { startTest(); return; }
       if (e.key === "ArrowRight") nextColor();
@@ -273,10 +260,8 @@
       if (e.key.toLowerCase() === "f") toggleFullscreen();
     });
 
-    // Bấm vào bất cứ đâu trên màn hình (ngoại trừ control và canvas), sang màu tiếp theo
     document.body.addEventListener("click", function(e) {
       if (!started) return;
-      // Nếu click vào control, colorName, note, hoặc canvas thì bỏ qua
       const ignoreIds = ["controls", "colorName", "colorBarTest", "note"];
       let target = e.target;
       while (target) {
@@ -286,14 +271,12 @@
       nextColor();
     });
 
-    // Khi đổi kích thước trình duyệt, vẽ lại thang màu nếu đang ở trạng thái thang màu
     window.addEventListener("resize", function() {
       if (started && colors[current].value === "colorBar") {
         drawColorBar();
       }
     });
 
-    // Khi bắt đầu, chỉ hiện màn hình chào, ẩn mọi thứ khác
     document.getElementById("controls").style.display = "none";
     document.getElementById("colorName").style.display = "none";
     document.getElementById("colorBarTest").style.display = "none";
