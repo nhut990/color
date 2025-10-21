@@ -91,6 +91,7 @@
       width: 100vw; height: 100vh;
       display: none;
       z-index: 2;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -100,10 +101,12 @@
       <strong>Hướng dẫn sử dụng:</strong>
       <ul>
         <li>Nhấn <strong>Bắt đầu test màn hình</strong> để kiểm tra các màu.</li>
-        <li>Dùng nút <strong>Trước</strong> hoặc <strong>Tiếp</strong> hoặc phím mũi tên trái/phải để chuyển qua các màu test.</li>
+        <li>Bấm vào bất kỳ đâu trên màn hình, hoặc dùng nút <strong>Tiếp</strong>, hoặc phím mũi tên phải để chuyển sang màu tiếp theo.</li>
+        <li>Dùng nút <strong>Trước</strong> hoặc phím mũi tên trái để quay lại màu trước.</li>
         <li>Nhấn <strong>Toàn màn hình</strong> hoặc phím <strong>F</strong> để chuyển sang chế độ toàn màn hình.</li>
         <li>Mỗi màu giúp bạn kiểm tra điểm chết, vết đốm, v.v. trên màn hình.</li>
         <li>Có một test đặc biệt là <strong>thang màu</strong> với các dải màu ngang, giúp kiểm tra khả năng hiển thị màu sắc.</li>
+        <li><strong>Lưu ý:</strong> Trình duyệt trên iPhone/iPad không hỗ trợ chế độ toàn màn hình. Nếu muốn trải nghiệm tốt nhất, hãy thêm trang này ra màn hình chính.</li>
       </ul>
     </div>
     <div>Bắt đầu test màn hình</div>
@@ -136,9 +139,9 @@
       const ctx = canvas.getContext("2d");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      // Các dải màu tương tự ảnh mẫu, bạn có thể chỉnh sửa màu/thứ tự nếu thích
+      // Dải màu đầu tiên là đỏ
       const barColors = [
-        "#63f7f7", // xanh ngọc nhạt
+        "#ff0000", // Đỏ
         "#f777e6", // hồng tím
         "#f7f777", // vàng nhạt
         "#8383f7", // xanh tím
@@ -154,6 +157,10 @@
         ctx.fillStyle = barColors[i];
         ctx.fillRect(0, i * barHeight, canvas.width, barHeight);
       }
+    }
+
+    function isIOS() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
 
     function updateColor() {
@@ -184,6 +191,10 @@
     }
 
     function toggleFullscreen() {
+      if (isIOS()) {
+        alert("Chế độ toàn màn hình không hỗ trợ trên trình duyệt iPhone/iPad. Bạn có thể thêm trang web này ra màn hình chính để trải nghiệm tốt hơn.");
+        return;
+      }
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
       } else {
@@ -200,14 +211,29 @@
     }
     document.getElementById("startBtn").onclick = startTest;
     document.getElementById("startScreen").onclick = function(e) {
-      if (e.target.id === "startBtn") return;
+      if (e.target.id === "startBtn" || e.target.closest('#instructions')) return;
       startTest();
     };
+
+    // Nhấn phím để điều khiển
     window.addEventListener("keydown", function(e) {
       if (!started) { startTest(); return; }
       if (e.key === "ArrowRight") nextColor();
       if (e.key === "ArrowLeft") prevColor();
       if (e.key.toLowerCase() === "f") toggleFullscreen();
+    });
+
+    // Bấm vào bất cứ đâu trên màn hình (ngoại trừ control và canvas), sang màu tiếp theo
+    document.body.addEventListener("click", function(e) {
+      if (!started) return;
+      // Nếu click vào control, colorName, hoặc canvas thì bỏ qua
+      const ignoreIds = ["controls", "colorName", "colorBarTest"];
+      let target = e.target;
+      while (target) {
+        if (ignoreIds.includes(target.id) || target.closest && target.closest('#controls')) return;
+        target = target.parentElement;
+      }
+      nextColor();
     });
 
     // Khi đổi kích thước trình duyệt, vẽ lại thang màu nếu đang ở trạng thái thang màu
