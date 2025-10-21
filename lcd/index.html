@@ -46,6 +46,22 @@
       z-index: 10;
       display: none;
     }
+    #note {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.85);
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 1.12em;
+      color: #333;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      z-index: 10;
+      display: none;
+      pointer-events: none;
+      font-style: italic;
+    }
     #startScreen {
       position: absolute;
       top: 0; left: 0;
@@ -101,7 +117,8 @@
       <strong>Hướng dẫn sử dụng:</strong>
       <ul>
         <li>Nhấn <strong>Bắt đầu test màn hình</strong> để kiểm tra các màu.</li>
-        <li>Bấm vào bất kỳ đâu trên màn hình, hoặc dùng nút <strong>Tiếp</strong>, hoặc phím mũi tên phải để chuyển sang màu tiếp theo.</li>
+        <li>Bấm vào <strong>bất kỳ đâu trên màn hình</strong> để chuyển sang màu tiếp theo.</li>
+        <li>Có thể dùng nút <strong>Tiếp</strong> hoặc phím mũi tên phải để chuyển màu tiếp theo.</li>
         <li>Dùng nút <strong>Trước</strong> hoặc phím mũi tên trái để quay lại màu trước.</li>
         <li>Nhấn <strong>Toàn màn hình</strong> hoặc phím <strong>F</strong> để chuyển sang chế độ toàn màn hình.</li>
         <li>Mỗi màu giúp bạn kiểm tra điểm chết, vết đốm, v.v. trên màn hình.</li>
@@ -113,6 +130,7 @@
     <button id="startBtn">Bắt đầu test màn hình</button>
   </div>
   <div id="colorName"></div>
+  <div id="note">Bấm vào màn hình để chuyển màu tiếp theo</div>
   <div id="controls">
     <button onclick="prevColor()">Trước</button>
     <button onclick="nextColor()">Tiếp</button>
@@ -166,6 +184,7 @@
     function updateColor() {
       const colorNameDiv = document.getElementById("colorName");
       const colorBarTest = document.getElementById("colorBarTest");
+      const note = document.getElementById("note");
 
       if (colors[current].value === "colorBar") {
         document.body.style.background = "#fff";
@@ -178,6 +197,7 @@
         colorNameDiv.textContent = colors[current].name;
       }
       colorNameDiv.style.display = "block";
+      note.style.display = "block";
     }
 
     function nextColor() {
@@ -226,11 +246,11 @@
     // Bấm vào bất cứ đâu trên màn hình (ngoại trừ control và canvas), sang màu tiếp theo
     document.body.addEventListener("click", function(e) {
       if (!started) return;
-      // Nếu click vào control, colorName, hoặc canvas thì bỏ qua
-      const ignoreIds = ["controls", "colorName", "colorBarTest"];
+      // Nếu click vào control, colorName, note, hoặc canvas thì bỏ qua
+      const ignoreIds = ["controls", "colorName", "colorBarTest", "note"];
       let target = e.target;
       while (target) {
-        if (ignoreIds.includes(target.id) || target.closest && target.closest('#controls')) return;
+        if (ignoreIds.includes(target.id) || (target.closest && target.closest('#controls'))) return;
         target = target.parentElement;
       }
       nextColor();
@@ -247,6 +267,7 @@
     document.getElementById("controls").style.display = "none";
     document.getElementById("colorName").style.display = "none";
     document.getElementById("colorBarTest").style.display = "none";
+    document.getElementById("note").style.display = "none";
   </script>
 </body>
 </html>
