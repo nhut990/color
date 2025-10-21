@@ -133,7 +133,7 @@
     }
 
     function toggleFullscreen() {
-      // iOS không hỗ trợ fullscreen qua JS
+      const btn = document.getElementById("fullscreenBtn");
       if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
         alert("Chế độ toàn màn hình không hỗ trợ trên trình duyệt iPhone/iPad.");
         return;
@@ -144,6 +144,18 @@
         document.exitFullscreen();
       }
     }
+
+    // Đổi text nút khi vào/thoát fullscreen
+    function updateFullscreenBtn() {
+      const btn = document.getElementById("fullscreenBtn");
+      if (document.fullscreenElement) {
+        btn.textContent = "Thoát màn hình";
+      } else {
+        btn.textContent = "Toàn màn hình";
+      }
+    }
+
+    document.addEventListener("fullscreenchange", updateFullscreenBtn);
 
     // Bấm bất kỳ đâu để bắt đầu và chuyển màu tiếp theo
     document.body.addEventListener("click", function(e) {
