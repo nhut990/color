@@ -9,14 +9,12 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background: #eaf1fb;
     }
     body {
       width: 100vw;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
       transition: background 0.2s;
     }
     #controls {
@@ -30,28 +28,40 @@
     button {
       font-size: 1.2em;
       margin: 0 10px;
-      padding: 10px 20px;
+      padding: 10px 24px;
+      background: linear-gradient(90deg,#36b7ff,#007bff);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       cursor: pointer;
+      font-weight: 500;
+      transition: background 0.18s;
+    }
+    button:hover, button:focus {
+      background: linear-gradient(90deg,#007bff,#36b7ff);
+      outline: none;
     }
     #colorName {
       position: fixed;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255,255,255,0.7);
-      padding: 8px 15px;
-      border-radius: 8px;
+      background: rgba(255,255,255,0.82);
+      padding: 10px 20px;
+      border-radius: 10px;
       font-weight: bold;
       font-size: 1.5em;
       z-index: 10;
       display: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     #note {
       position: fixed;
       bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.90);
       padding: 10px 22px;
       border-radius: 10px;
       font-size: 1.12em;
@@ -61,45 +71,67 @@
       display: none;
       pointer-events: none;
       font-style: italic;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
     #startScreen {
       position: absolute;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: #fff;
+      background: linear-gradient(110deg,#eaf1fb 60%,#d6ebff 100%);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 100;
-      font-size: 2em;
+      font-size: 1.4em;
       color: #222;
       transition: opacity 0.3s;
       text-align: center;
     }
-    #startScreen button {
-      margin-top: 40px;
-      font-size: 1.2em;
-      padding: 12px 28px;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    #startScreen button:hover {
-      background: #0056b3;
+    #startTitle {
+      font-size: 2.6em;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 15px;
+      color: #007bff;
+      text-shadow: 0 4px 12px rgba(0,123,255,0.09);
     }
     #instructions {
-      max-width: 600px;
-      padding: 20px 30px;
-      background: #f3f3f3;
-      border-radius: 14px;
-      margin-bottom: 30px;
-      font-size: 1.1em;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      max-width: 480px;
+      padding: 22px 35px;
+      background: #fff;
+      border-radius: 16px;
+      margin-bottom: 38px;
+      font-size: 1.07em;
+      box-shadow: 0 8px 32px rgba(0,123,255,0.08);
       text-align: left;
+      color: #222;
+      line-height: 1.7;
+    }
+    #instructions ul {
+      margin: 0;
+      padding-left: 19px;
+    }
+    #instructions li {
+      margin-bottom: 12px;
+    }
+    #startScreen button {
+      margin-top: 18px;
+      font-size: 1.3em;
+      padding: 16px 44px;
+      background: linear-gradient(90deg,#36b7ff,#007bff);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,123,255,0.13);
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      transition: background 0.18s;
+    }
+    #startScreen button:hover, #startScreen button:focus {
+      background: linear-gradient(90deg,#007bff,#36b7ff);
+      outline: none;
     }
     #colorBarTest {
       position: absolute;
@@ -113,20 +145,18 @@
 </head>
 <body>
   <div id="startScreen">
+    <div id="startTitle">Test Màn Hình Online</div>
     <div id="instructions">
-      <strong>Hướng dẫn sử dụng:</strong>
       <ul>
-        <li>Nhấn <strong>Bắt đầu test màn hình</strong> để kiểm tra các màu.</li>
+        <li>Nhấn <strong>Bắt đầu test màn hình</strong> để bắt đầu kiểm tra.</li>
         <li>Bấm vào <strong>bất kỳ đâu trên màn hình</strong> để chuyển sang màu tiếp theo.</li>
         <li>Có thể dùng nút <strong>Tiếp</strong> hoặc phím mũi tên phải để chuyển màu tiếp theo.</li>
         <li>Dùng nút <strong>Trước</strong> hoặc phím mũi tên trái để quay lại màu trước.</li>
         <li>Nhấn <strong>Toàn màn hình</strong> hoặc phím <strong>F</strong> để chuyển sang chế độ toàn màn hình.</li>
         <li>Mỗi màu giúp bạn kiểm tra điểm chết, vết đốm, v.v. trên màn hình.</li>
-        <li>Có một test đặc biệt là <strong>thang màu</strong> với các dải màu ngang, giúp kiểm tra khả năng hiển thị màu sắc.</li>
         <li><strong>Lưu ý:</strong> Trình duyệt trên iPhone/iPad không hỗ trợ chế độ toàn màn hình. Nếu muốn trải nghiệm tốt nhất, hãy thêm trang này ra màn hình chính.</li>
       </ul>
     </div>
-    <div>Bắt đầu test màn hình</div>
     <button id="startBtn">Bắt đầu test màn hình</button>
   </div>
   <div id="colorName"></div>
