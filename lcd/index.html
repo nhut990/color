@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Màn Hình Online</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.2s;
+    }
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: none;
+    }
+    button {
+      font-size: 1.2em;
+      margin: 0 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #colorName {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.7);
+      padding: 8px 15px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.5em;
+      z-index: 10;
+      display: none;
+    }
+    #startScreen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+      font-size: 2em;
+      color: #222;
+      transition: opacity 0.3s;
+      text-align: center;
+    }
+    #startScreen button {
+      margin-top: 40px;
+      font-size: 1.2em;
+      padding: 12px 28px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #startScreen button:hover {
+      background: #0056b3;
+    }
+    #instructions {
+      max-width: 600px;
+      padding: 20px 30px;
+      background: #f3f3f3;
+      border-radius: 14px;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      text-align: left;
+    }
+    #colorBarTest {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: none;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div id="startScreen">
+    <div id="instructions">
+      <strong>Hướng dẫn sử dụng:</strong>
+      <ul>
+        <li>Nhấn <strong>Bắt đầu test màn hình</strong> để kiểm tra các màu.</li>
+        <li>Dùng nút <strong>Trước</strong> hoặc <strong>Tiếp</strong> hoặc phím mũi tên trái/phải để chuyển qua các màu test.</li>
+        <li>Nhấn <strong>Toàn màn hình</strong> hoặc phím <strong>F</strong> để chuyển sang chế độ toàn màn hình.</li>
+        <li>Mỗi màu giúp bạn kiểm tra điểm chết, vết đốm, v.v. trên màn hình.</li>
+        <li>Có một test đặc biệt là <strong>thang màu</strong> với các dải màu ngang, giúp kiểm tra khả năng hiển thị màu sắc.</li>
+      </ul>
+    </div>
+    <div>Bắt đầu test màn hình</div>
+    <button id="startBtn">Bắt đầu test màn hình</button>
+  </div>
+  <div id="colorName"></div>
+  <div id="controls">
+    <button onclick="prevColor()">Trước</button>
+    <button onclick="nextColor()">Tiếp</button>
+    <button onclick="toggleFullscreen()">Toàn màn hình</button>
+  </div>
+  <canvas id="colorBarTest"></canvas>
+  <script>
+    const colors = [
+      { name: "Trắng", value: "#ffffff" },
+      { name: "Đen", value: "#000000" },
+      { name: "Đỏ", value: "#ff0000" },
+      { name: "Lục", value: "#00ff00" },
+      { name: "Lam", value: "#0000ff" },
+      { name: "Vàng", value: "#ffff00" },
+      { name: "Tím", value: "#800080" },
+      { name: "Xám", value: "#888888" },
+      { name: "Thang màu", value: "colorBar" }
+    ];
+    let current = 0;
+    let started = false;
+
+    function drawColorBar() {
+      const canvas = document.getElementById("colorBarTest");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      // Các dải màu tương tự ảnh mẫu, bạn có thể chỉnh sửa màu/thứ tự nếu thích
+      const barColors = [
+        "#63f7f7", // xanh ngọc nhạt
+        "#f777e6", // hồng tím
+        "#f7f777", // vàng nhạt
+        "#8383f7", // xanh tím
+        "#7af77a", // xanh lá
+        "#f77a7a", // đỏ cam
+        "#228888", // xanh đậm
+        "#8a2288", // tím đậm
+        "#999922", // vàng đất
+        "#222288"  // xanh nước biển đậm
+      ];
+      let barHeight = canvas.height / barColors.length;
+      for (let i = 0; i < barColors.length; i++) {
+        ctx.fillStyle = barColors[i];
+        ctx.fillRect(0, i * barHeight, canvas.width, barHeight);
+      }
+    }
+
+    function updateColor() {
+      const colorNameDiv = document.getElementById("colorName");
+      const colorBarTest = document.getElementById("colorBarTest");
+
+      if (colors[current].value === "colorBar") {
+        document.body.style.background = "#fff";
+        colorBarTest.style.display = "block";
+        drawColorBar();
+        colorNameDiv.textContent = "Thang màu";
+      } else {
+        document.body.style.background = colors[current].value;
+        colorBarTest.style.display = "none";
+        colorNameDiv.textContent = colors[current].name;
+      }
+      colorNameDiv.style.display = "block";
+    }
+
+    function nextColor() {
+      current = (current + 1) % colors.length;
+      updateColor();
+    }
+
+    function prevColor() {
+      current = (current - 1 + colors.length) % colors.length;
+      updateColor();
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function startTest() {
+      if (started) return;
+      started = true;
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("controls").style.display = "block";
+      updateColor();
+    }
+    document.getElementById("startBtn").onclick = startTest;
+    document.getElementById("startScreen").onclick = function(e) {
+      if (e.target.id === "startBtn") return;
+      startTest();
+    };
+    window.addEventListener("keydown", function(e) {
+      if (!started) { startTest(); return; }
+      if (e.key === "ArrowRight") nextColor();
+      if (e.key === "ArrowLeft") prevColor();
+      if (e.key.toLowerCase() === "f") toggleFullscreen();
+    });
+
+    // Khi đổi kích thước trình duyệt, vẽ lại thang màu nếu đang ở trạng thái thang màu
+    window.addEventListener("resize", function() {
+      if (started && colors[current].value === "colorBar") {
+        drawColorBar();
+      }
+    });
+
+    // Khi bắt đầu, chỉ hiện màn hình chào, ẩn mọi thứ khác
+    document.getElementById("controls").style.display = "none";
+    document.getElementById("colorName").style.display = "none";
+    document.getElementById("colorBarTest").style.display = "none";
+  </script>
+</body>
+</html>
