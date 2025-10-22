@@ -26,6 +26,7 @@
       text-align: center;
       z-index: 2;
       transition: opacity 0.25s;
+      user-select: none;
     }
     #note {
       position: absolute;
@@ -42,6 +43,7 @@
       z-index: 2;
       text-align: center;
       transition: opacity 0.25s;
+      user-select: none;
     }
     #controls {
       position: fixed;
@@ -77,10 +79,29 @@
       display: block;
       background: transparent;
     }
+    #currentColorName {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.13em;
+      color: #007bff;
+      background: rgba(255,255,255,0.9);
+      border-radius: 6px;
+      padding: 4px 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      font-weight: 500;
+      z-index: 3;
+      display: none;
+      transition: opacity 0.2s;
+      pointer-events: none;
+      user-select: none;
+    }
     @media (max-width:400px) {
       #title { font-size: 1.3em; }
       #note { font-size: 0.98em; padding: 7px 8px;}
       #fullscreenBtn { font-size: 0.95em; padding: 7px 10px;}
+      #currentColorName { font-size: 1em; padding: 3px 8px;}
     }
   </style>
 </head>
@@ -88,132 +109,186 @@
   <div id="title">Test Màn Hình</div>
   <div id="note">Chạm vào màn hình để chuyển màu và kiểm tra điểm chết.</div>
   <div id="controls">
-    <button id="fullscreenBtn" onclick="toggleFullscreen()">Toàn màn hình</button>
+    <button id="fullscreenBtn">Toàn màn hình</button>
   </div>
+  <div id="currentColorName"></div>
   <canvas id="colorBarTest"></canvas>
   <script>
     // Kiểm tra thiết bị iOS đời cũ
     function isOldIOS() {
-      var ua = navigator.userAgent;
+      const ua = navigator.userAgent;
       return (/iPhone|iPad|iPod/.test(ua) && /OS 10_/.test(ua));
     }
 
-    // Ẩn nút fullscreen nếu là iOS cũ
-    if (isOldIOS()) {
-      document.getElementById("controls").style.display = "none";
-    }
+    document.addEventListener("DOMContentLoaded", function() {
+      const controls = document.getElementById("controls");
+      const canvas = document.getElementById("colorBarTest");
+      const btn = document.getElementById("fullscreenBtn");
+      const currentColorNameDiv = document.getElementById("currentColorName");
+      const title = document.getElementById("title");
+      const note = document.getElementById("note");
 
-    var colors = [
-      { name: "Trắng", value: "#ffffff" },
-      { name: "Đen", value: "#000000" },
-      { name: "Đỏ", value: "#ff0000" },
-      { name: "Lục", value: "#00ff00" },
-      { name: "Lam", value: "#0000ff" },
-      { name: "Vàng", value: "#ffff00" },
-      { name: "Tím", value: "#800080" },
-      { name: "Xám", value: "#888888" },
-      { name: "Thang màu", value: "colorBar" }
-    ];
-    var current = 0;
-    var started = false;
+      if (isOldIOS()) controls.style.display = "none";
 
-    // Vẽ thang màu
-    function drawColorBar() {
-      var canvas = document.getElementById("colorBarTest");
-      var ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      var barColors = [
-        "#ff0000", "#f777e6", "#f7f777", "#8383f7", "#7af77a",
-        "#f77a7a", "#228888", "#8a2288", "#999922", "#222288"
+      // Danh sách màu
+      const colors = [
+        { name: "Trắng", value: "#ffffff" },
+        { name: "Đen", value: "#000000" },
+        { name: "Đỏ", value: "#ff0000" },
+        { name: "Xanh lục", value: "#00ff00" },
+        { name: "Xanh lam", value: "#0000ff" },
+        { name: "Vàng", value: "#ffff00" },
+        { name: "Tím", value: "#800080" },
+        { name: "Hồng", value: "#ff69b4" },
+        { name: "Xanh ngọc", value: "#00ffff" },
+        { name: "Cam", value: "#ff9900" },
+        { name: "Xám", value: "#888888" },
+        { name: "Nâu", value: "#964B00" },
+        { name: "Thang màu", value: "colorBar" }
       ];
-      var barHeight = canvas.height / barColors.length;
-      for (var i = 0; i < barColors.length; i++) {
-        ctx.fillStyle = barColors[i];
-        ctx.fillRect(0, i * barHeight, canvas.width, barHeight);
-      }
-    }
+      let current = 0;
+      let started = false;
 
-    // Đổi màu nền/canvas
-    function updateColor() {
-      var canvas = document.getElementById("colorBarTest");
-      if (colors[current].value === "colorBar") {
-        document.body.style.background = "#fff";
-        canvas.style.display = "block";
-        drawColorBar();
-      } else {
-        document.body.style.background = colors[current].value;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        var ctx = canvas.getContext("2d");
+      // Thang màu đa sắc nét, bổ sung nhiều màu
+      const barColors = [
+        "#ff0000", // Đỏ
+        "#ff9900", // Cam
+        "#ffff00", // Vàng
+        "#00ff00", // Xanh lục
+        "#00ffff", // Xanh ngọc
+        "#0000ff", // Xanh lam
+        "#800080", // Tím
+        "#ff69b4", // Hồng
+        "#964B00", // Nâu
+        "#888888", // Xám
+        "#ffffff", // Trắng
+        "#000000", // Đen
+        "#7af77a", // Xanh lá non
+        "#8383f7", // Xanh tím
+        "#f777e6", // Tím hồng
+        "#999922", // Vàng đất
+        "#228888", // Xanh rêu
+        "#222288"  // Xanh đậm
+      ];
+
+      function resizeCanvas() {
+        // Retina/4K: canvas luôn nét
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        const ctx = canvas.getContext("2d");
+        ctx.setTransform(1,0,0,1,0,0);
+        ctx.scale(dpr, dpr);
+        return ctx;
+      }
+
+      // Vẽ thang màu rực rỡ, sắc nét
+      function drawColorBar() {
+        const ctx = resizeCanvas();
+        const n = barColors.length;
+        const barHeight = window.innerHeight / n;
+        for (let i = 0; i < n; i++) {
+          ctx.fillStyle = barColors[i];
+          ctx.fillRect(0, i * barHeight, window.innerWidth, barHeight);
+        }
+        // Vẽ viền trắng rõ nét giữa các màu
+        ctx.strokeStyle = "rgba(255,255,255,0.8)";
+        ctx.lineWidth = 1.2;
+        for (let i = 1; i < n; i++) {
+          ctx.beginPath();
+          ctx.moveTo(0, i * barHeight);
+          ctx.lineTo(window.innerWidth, i * barHeight);
+          ctx.stroke();
+        }
+      }
+
+      function updateColor() {
+        if (colors[current].value === "colorBar") {
+          document.body.style.background = "#fff";
+          canvas.style.display = "block";
+          drawColorBar();
+        } else {
+          document.body.style.background = colors[current].value;
+          const ctx = resizeCanvas();
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          canvas.style.display = "block";
+        }
+        // Hiển thị tên màu
+        currentColorNameDiv.textContent = colors[current].name;
+        currentColorNameDiv.style.display = started ? "block" : "none";
+      }
+
+      function nextColor() {
+        current = (current + 1) % colors.length;
+        updateColor();
+      }
+
+      function toggleFullscreen() {
+        if (isOldIOS()) {
+          alert("Trình duyệt iPhone/iPad đời cũ không hỗ trợ chế độ toàn màn hình.");
+          return;
+        }
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      function updateFullscreenBtn() {
+        btn.textContent = document.fullscreenElement ? "Thoát toàn màn hình" : "Toàn màn hình";
+      }
+      document.addEventListener("fullscreenchange", updateFullscreenBtn);
+
+      function handleNext(e) {
+        e.preventDefault();
+        if (!started) {
+          started = true;
+          title.style.display = "none";
+          note.style.display = "none";
+          updateColor();
+          currentColorNameDiv.style.display = "block";
+        } else {
+          nextColor();
+        }
+      }
+
+      function setInitialCanvas() {
+        const ctx = resizeCanvas();
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.style.display = "block";
       }
-    }
 
-    function nextColor() {
-      current = (current + 1) % colors.length;
-      updateColor();
-    }
-
-    // Xử lý fullscreen trên máy hỗ trợ
-    function toggleFullscreen() {
-      var btn = document.getElementById("fullscreenBtn");
-      if (isOldIOS()) {
-        alert("Trình duyệt iPhone/iPad đời cũ không hỗ trợ chế độ toàn màn hình.");
-        return;
+      function resetTest() {
+        started = false;
+        title.style.display = "block";
+        note.style.display = "block";
+        currentColorNameDiv.style.display = "none";
+        current = 0;
+        document.body.style.background = "#eaf1fb";
+        setInitialCanvas();
       }
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    }
-    function updateFullscreenBtn() {
-      var btn = document.getElementById("fullscreenBtn");
-      if (document.fullscreenElement) {
-        btn.textContent = "Thoát toàn màn hình";
-      } else {
-        btn.textContent = "Toàn màn hình";
-      }
-    }
-    document.addEventListener("fullscreenchange", updateFullscreenBtn);
 
-    // Sự kiện chạm/click canvas để chuyển màu
-    var canvas = document.getElementById("colorBarTest");
-    canvas.addEventListener("touchstart", handleNext, false);
-    canvas.addEventListener("mousedown", handleNext, false);
+      // Sự kiện
+      canvas.addEventListener("touchstart", handleNext, false);
+      canvas.addEventListener("mousedown", handleNext, false);
+      btn.addEventListener("click", toggleFullscreen);
 
-    function handleNext(e) {
-      e.preventDefault();
-      if (!started) {
-        started = true;
-        document.getElementById("title").style.display = "none";
-        document.getElementById("note").style.display = "none";
-        nextColor();
-      } else {
-        nextColor();
-      }
-    }
+      window.addEventListener("resize", function() {
+        if (started) updateColor();
+        else setInitialCanvas();
+      });
 
-    // Đảm bảo canvas luôn full màn hình khi rotate hoặc resize
-    window.addEventListener("resize", function() {
-      if (started) updateColor();
+      // Nếu thoát fullscreen, reset lại giao diện
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement && started) {
+          resetTest();
+        }
+      });
+
+      setInitialCanvas();
     });
-
-    // Khởi tạo canvas full màn hình
-    function setInitialCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      canvas.style.display = "block";
-    }
-    setInitialCanvas();
-
-    // Nếu chưa bắt đầu thì vẽ canvas trong suốt để nhận sự kiện touch
-    if (!started) {
-      var ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
   </script>
 </body>
 </html>
