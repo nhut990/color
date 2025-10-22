@@ -3,24 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Test Màn Hình</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
       background: #eaf1fb;
       font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      overflow: hidden;
     }
     #title {
       position: absolute;
-      top: 38px;
+      top: 28px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 2.4em;
+      font-size: 2em;
       font-weight: bold;
       color: #007bff;
-      text-shadow: 0 2px 10px rgba(0,123,255,0.09);
+      text-shadow: 0 2px 8px rgba(0,123,255,0.09);
       letter-spacing: 0.04em;
       text-align: center;
       z-index: 2;
@@ -28,15 +29,15 @@
     }
     #note {
       position: absolute;
-      top: 100px;
+      top: 78px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 1.25em;
+      font-size: 1.15em;
       color: #222;
-      background: rgba(255,255,255,0.85);
-      border-radius: 10px;
-      padding: 10px 28px;
-      box-shadow: 0 2px 12px rgba(0,123,255,0.08);
+      background: rgba(255,255,255,0.88);
+      border-radius: 8px;
+      padding: 8px 18px;
+      box-shadow: 0 2px 10px rgba(0,123,255,0.06);
       font-style: italic;
       z-index: 2;
       text-align: center;
@@ -44,24 +45,25 @@
     }
     #controls {
       position: fixed;
-      bottom: 30px;
+      bottom: 22px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
       display: block;
     }
     #fullscreenBtn {
-      font-size: 1.2em;
-      margin: 0 10px;
-      padding: 10px 24px;
+      font-size: 1.1em;
+      margin: 0 8px;
+      padding: 8px 18px;
       background: linear-gradient(90deg,#36b7ff,#007bff);
       color: #fff;
       border: none;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
       cursor: pointer;
       font-weight: 500;
       transition: background 0.18s;
+      display: inline-block;
     }
     #fullscreenBtn:hover, #fullscreenBtn:focus {
       background: linear-gradient(90deg,#007bff,#36b7ff);
@@ -71,21 +73,37 @@
       position: absolute;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      display: none;
       z-index: 1;
-      pointer-events: none;
+      display: block;
+      background: transparent;
+    }
+    @media (max-width:400px) {
+      #title { font-size: 1.3em; }
+      #note { font-size: 0.98em; padding: 7px 8px;}
+      #fullscreenBtn { font-size: 0.95em; padding: 7px 10px;}
     }
   </style>
 </head>
 <body>
   <div id="title">Test Màn Hình</div>
-  <div id="note">Bấm Vào Màn Hình Bất Kỳ Để Test</div>
+  <div id="note">Chạm vào màn hình để chuyển màu và kiểm tra điểm chết.</div>
   <div id="controls">
     <button id="fullscreenBtn" onclick="toggleFullscreen()">Toàn màn hình</button>
   </div>
   <canvas id="colorBarTest"></canvas>
   <script>
-    const colors = [
+    // Kiểm tra thiết bị iOS đời cũ
+    function isOldIOS() {
+      var ua = navigator.userAgent;
+      return (/iPhone|iPad|iPod/.test(ua) && /OS 10_/.test(ua));
+    }
+
+    // Ẩn nút fullscreen nếu là iOS cũ
+    if (isOldIOS()) {
+      document.getElementById("controls").style.display = "none";
+    }
+
+    var colors = [
       { name: "Trắng", value: "#ffffff" },
       { name: "Đen", value: "#000000" },
       { name: "Đỏ", value: "#ff0000" },
@@ -96,34 +114,40 @@
       { name: "Xám", value: "#888888" },
       { name: "Thang màu", value: "colorBar" }
     ];
-    let current = 0;
-    let started = false;
+    var current = 0;
+    var started = false;
 
+    // Vẽ thang màu
     function drawColorBar() {
-      const canvas = document.getElementById("colorBarTest");
-      const ctx = canvas.getContext("2d");
+      var canvas = document.getElementById("colorBarTest");
+      var ctx = canvas.getContext("2d");
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      const barColors = [
+      var barColors = [
         "#ff0000", "#f777e6", "#f7f777", "#8383f7", "#7af77a",
         "#f77a7a", "#228888", "#8a2288", "#999922", "#222288"
       ];
-      let barHeight = canvas.height / barColors.length;
-      for (let i = 0; i < barColors.length; i++) {
+      var barHeight = canvas.height / barColors.length;
+      for (var i = 0; i < barColors.length; i++) {
         ctx.fillStyle = barColors[i];
         ctx.fillRect(0, i * barHeight, canvas.width, barHeight);
       }
     }
 
+    // Đổi màu nền/canvas
     function updateColor() {
-      const colorBarTest = document.getElementById("colorBarTest");
+      var canvas = document.getElementById("colorBarTest");
       if (colors[current].value === "colorBar") {
         document.body.style.background = "#fff";
-        colorBarTest.style.display = "block";
+        canvas.style.display = "block";
         drawColorBar();
       } else {
         document.body.style.background = colors[current].value;
-        colorBarTest.style.display = "none";
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        var ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = "block";
       }
     }
 
@@ -132,10 +156,11 @@
       updateColor();
     }
 
+    // Xử lý fullscreen trên máy hỗ trợ
     function toggleFullscreen() {
-      const btn = document.getElementById("fullscreenBtn");
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-        alert("Chế độ toàn màn hình không hỗ trợ trên trình duyệt iPhone/iPad.");
+      var btn = document.getElementById("fullscreenBtn");
+      if (isOldIOS()) {
+        alert("Trình duyệt iPhone/iPad đời cũ không hỗ trợ chế độ toàn màn hình.");
         return;
       }
       if (!document.fullscreenElement) {
@@ -144,23 +169,23 @@
         document.exitFullscreen();
       }
     }
-
-    // Đổi text nút khi vào/thoát fullscreen
     function updateFullscreenBtn() {
-      const btn = document.getElementById("fullscreenBtn");
+      var btn = document.getElementById("fullscreenBtn");
       if (document.fullscreenElement) {
-        btn.textContent = "Thoát màn hình";
+        btn.textContent = "Thoát toàn màn hình";
       } else {
         btn.textContent = "Toàn màn hình";
       }
     }
-
     document.addEventListener("fullscreenchange", updateFullscreenBtn);
 
-    // Bấm bất kỳ đâu để bắt đầu và chuyển màu tiếp theo
-    document.body.addEventListener("click", function(e) {
-      // Không xử lý khi click vào nút toàn màn hình
-      if (e.target.id === "fullscreenBtn") return;
+    // Sự kiện chạm/click canvas để chuyển màu
+    var canvas = document.getElementById("colorBarTest");
+    canvas.addEventListener("touchstart", handleNext, false);
+    canvas.addEventListener("mousedown", handleNext, false);
+
+    function handleNext(e) {
+      e.preventDefault();
       if (!started) {
         started = true;
         document.getElementById("title").style.display = "none";
@@ -169,14 +194,26 @@
       } else {
         nextColor();
       }
+    }
+
+    // Đảm bảo canvas luôn full màn hình khi rotate hoặc resize
+    window.addEventListener("resize", function() {
+      if (started) updateColor();
     });
 
-    // Khi đổi kích thước trình duyệt, vẽ lại thang màu nếu đang ở trạng thái thang màu
-    window.addEventListener("resize", function() {
-      if (started && colors[current].value === "colorBar") {
-        drawColorBar();
-      }
-    });
+    // Khởi tạo canvas full màn hình
+    function setInitialCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.style.display = "block";
+    }
+    setInitialCanvas();
+
+    // Nếu chưa bắt đầu thì vẽ canvas trong suốt để nhận sự kiện touch
+    if (!started) {
+      var ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
   </script>
 </body>
 </html>
