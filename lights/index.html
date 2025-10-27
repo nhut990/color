@@ -45,8 +45,26 @@
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 16px;
             font-size: 28px;
+        }
+
+        .notice {
+            text-align: center;
+            margin-bottom: 24px;
+            font-size: 15px;
+            color: #d32f2f;
+            font-weight: 500;
+        }
+        .notice .highlight {
+            font-weight: bold;
+            color: #fff;
+            background: #d32f2f;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 16px;
+            margin-right: 4px;
+            display: inline-block;
         }
 
         .setting-group {
@@ -233,7 +251,6 @@
             color: black;
         }
 
-        /* Tương thích iOS Safari cũ */
         @media screen and (-webkit-min-device-pixel-ratio: 0) {
             input[type="range"] {
                 -webkit-appearance: none;
@@ -247,7 +264,10 @@
     <div id="settings">
         <div class="settings-box">
             <h1>⚡ Đèn Cảnh Sát ⚡</h1>
-            
+            <div class="notice">
+                <span class="highlight">Lưu ý :</span>
+                Chỉ mô phỏng để giải trí — tuyệt đối không dùng để mạo danh, gây nhầm lẫn hay can thiệp giao thông
+            </div>
             <div class="setting-group">
                 <label>Tốc độ chớp:</label>
                 <input type="range" id="speedSlider" min="50" max="1000" value="300" step="50">
