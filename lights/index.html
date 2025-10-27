@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -14,428 +13,418 @@
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
         }
-
-```
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-        overflow: hidden;
-        -webkit-user-select: none;
-        user-select: none;
-    }
-
-    #settings {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .settings-box {
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        max-width: 400px;
-        width: 90%;
-    }
-
-    h1 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 30px;
-        font-size: 28px;
-    }
-
-    .setting-group {
-        margin-bottom: 25px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 10px;
-        color: #555;
-        font-weight: bold;
-        font-size: 16px;
-    }
-
-    input[type="range"] {
-        width: 100%;
-        height: 8px;
-        border-radius: 5px;
-        background: #ddd;
-        outline: none;
-        -webkit-appearance: none;
-        appearance: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #667eea;
-        cursor: pointer;
-    }
-
-    input[type="range"]::-moz-range-thumb {
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: #667eea;
-        cursor: pointer;
-        border: none;
-    }
-
-    .speed-value {
-        text-align: center;
-        margin-top: 8px;
-        color: #667eea;
-        font-weight: bold;
-        font-size: 18px;
-    }
-
-    .mode-buttons {
-        display: flex;
-        gap: 15px;
-    }
-
-    .mode-btn {
-        flex: 1;
-        padding: 15px;
-        border: 3px solid #ddd;
-        background: white;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: all 0.3s;
-        -webkit-transition: all 0.3s;
-        font-size: 14px;
-        font-weight: bold;
-        color: #555;
-    }
-
-    .mode-btn:active {
-        transform: scale(0.95);
-        -webkit-transform: scale(0.95);
-    }
-
-    .mode-btn.active {
-        background: #667eea;
-        color: white;
-        border-color: #667eea;
-    }
-
-    .start-btn {
-        width: 100%;
-        padding: 18px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 30px;
-        transition: transform 0.2s;
-        -webkit-transition: transform 0.2s;
-    }
-
-    .start-btn:active {
-        transform: scale(0.95);
-        -webkit-transform: scale(0.95);
-    }
-
-    #lights {
-        display: none;
-        width: 100%;
-        height: 100vh;
-        position: fixed;
-        top: 0;
-        left: 0;
-    }
-
-    .light-container {
-        width: 100%;
-        height: 50%;
-        transition: opacity 0.1s ease;
-        -webkit-transition: opacity 0.1s ease;
-    }
-
-    #leftLight {
-        background-color: #ff0000;
-    }
-
-    #rightLight {
-        background-color: #0000ff;
-    }
-
-    .light-off {
-        opacity: 0.1 !important;
-    }
-
-    #stopBtn {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        width: 50px;
-        height: 50px;
-        background: rgba(0,0,0,0.7);
-        color: white;
-        border: 2px solid white;
-        border-radius: 50%;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 100;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-        -webkit-transition: all 0.3s;
-        line-height: 1;
-        padding: 0;
-    }
-
-    #stopBtn:active {
-        transform: scale(0.85);
-        -webkit-transform: scale(0.85);
-        background: rgba(255,255,255,0.9);
-        color: black;
-    }
-
-    #fullscreenBtn {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        width: 50px;
-        height: 50px;
-        background: rgba(0,0,0,0.6);
-        color: white;
-        border: 2px solid white;
-        border-radius: 10px;
-        font-size: 24px;
-        cursor: pointer;
-        z-index: 200;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s;
-        -webkit-transition: all 0.3s;
-    }
-
-    #fullscreenBtn:active {
-        transform: scale(0.85);
-        -webkit-transform: scale(0.85);
-        background: rgba(255,255,255,0.9);
-        color: black;
-    }
-
-    /* Tương thích iOS Safari cũ */
-    @media screen and (-webkit-min-device-pixel-ratio: 0) {
-        input[type="range"] {
-            -webkit-appearance: none;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
         }
-    }
-</style>
-```
 
+        #settings {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .settings-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .speed-value {
+            text-align: center;
+            margin-top: 8px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            -webkit-transition: all 0.3s;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .mode-btn:active {
+            transform: scale(0.95);
+            -webkit-transform: scale(0.95);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.2s;
+            -webkit-transition: transform 0.2s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+            -webkit-transform: scale(0.95);
+        }
+
+        #lights {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .light-container {
+            width: 100%;
+            height: 50%;
+            transition: opacity 0.1s ease;
+            -webkit-transition: opacity 0.1s ease;
+        }
+
+        #leftLight {
+            background-color: #ff0000;
+        }
+
+        #rightLight {
+            background-color: #0000ff;
+        }
+
+        .light-off {
+            opacity: 0.1 !important;
+        }
+
+        #stopBtn {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            -webkit-transition: all 0.3s;
+            line-height: 1;
+            padding: 0;
+        }
+
+        #stopBtn:active {
+            transform: scale(0.85);
+            -webkit-transform: scale(0.85);
+            background: rgba(255,255,255,0.9);
+            color: black;
+        }
+
+        #fullscreenBtn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: 2px solid white;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            -webkit-transition: all 0.3s;
+        }
+
+        #fullscreenBtn:active {
+            transform: scale(0.85);
+            -webkit-transform: scale(0.85);
+            background: rgba(255,255,255,0.9);
+            color: black;
+        }
+
+        /* Tương thích iOS Safari cũ */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) {
+            input[type="range"] {
+                -webkit-appearance: none;
+            }
+        }
+    </style>
 </head>
 <body>
     <button id="fullscreenBtn" title="Fullscreen">⛶</button>
 
-```
-<div id="settings">
-    <div class="settings-box">
-        <h1>⚡ Đèn Cảnh Sát ⚡</h1>
-        
-        <div class="setting-group">
-            <label>Tốc độ chớp:</label>
-            <input type="range" id="speedSlider" min="50" max="1000" value="300" step="50">
-            <div class="speed-value" id="speedValue">300ms</div>
-        </div>
-
-        <div class="setting-group">
-            <label>Kiểu chớp:</label>
-            <div class="mode-buttons">
-                <button class="mode-btn active" data-mode="alternate">
-                    Qua lại<br>🔴🔵
-                </button>
-                <button class="mode-btn" data-mode="together">
-                    Cùng lúc<br>🔴🔵
-                </button>
+    <div id="settings">
+        <div class="settings-box">
+            <h1>⚡ Đèn Cảnh Sát ⚡</h1>
+            
+            <div class="setting-group">
+                <label>Tốc độ chớp:</label>
+                <input type="range" id="speedSlider" min="50" max="1000" value="300" step="50">
+                <div class="speed-value" id="speedValue">300ms</div>
             </div>
+
+            <div class="setting-group">
+                <label>Kiểu chớp:</label>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" data-mode="alternate">
+                        Qua lại<br>🔴🔵
+                    </button>
+                    <button class="mode-btn" data-mode="together">
+                        Cùng lúc<br>🔴🔵
+                    </button>
+                </div>
+            </div>
+
+            <button class="start-btn" id="startBtn">BẮT ĐẦU</button>
         </div>
-
-        <button class="start-btn" id="startBtn">BẮT ĐẦU</button>
     </div>
-</div>
 
-<div id="lights">
-    <div class="light-container" id="leftLight"></div>
-    <div class="light-container" id="rightLight"></div>
-</div>
+    <div id="lights">
+        <div class="light-container" id="leftLight"></div>
+        <div class="light-container" id="rightLight"></div>
+    </div>
 
-<button id="stopBtn">✕</button>
+    <button id="stopBtn">✕</button>
 
-<script>
-    (function() {
-        'use strict';
-        
-        var speed = 300;
-        var mode = 'alternate';
-        var interval = null;
-        var isLeftOn = true;
+    <script>
+        (function() {
+            'use strict';
+            
+            var speed = 300;
+            var mode = 'alternate';
+            var interval = null;
+            var isLeftOn = true;
 
-        var speedSlider = document.getElementById('speedSlider');
-        var speedValue = document.getElementById('speedValue');
-        var modeButtons = document.querySelectorAll('.mode-btn');
-        var startBtn = document.getElementById('startBtn');
-        var stopBtn = document.getElementById('stopBtn');
-        var fullscreenBtn = document.getElementById('fullscreenBtn');
-        var settings = document.getElementById('settings');
-        var lights = document.getElementById('lights');
-        var leftLight = document.getElementById('leftLight');
-        var rightLight = document.getElementById('rightLight');
+            var speedSlider = document.getElementById('speedSlider');
+            var speedValue = document.getElementById('speedValue');
+            var modeButtons = document.querySelectorAll('.mode-btn');
+            var startBtn = document.getElementById('startBtn');
+            var stopBtn = document.getElementById('stopBtn');
+            var fullscreenBtn = document.getElementById('fullscreenBtn');
+            var settings = document.getElementById('settings');
+            var lights = document.getElementById('lights');
+            var leftLight = document.getElementById('leftLight');
+            var rightLight = document.getElementById('rightLight');
 
-        // Tương thích iOS cũ - hỗ trợ cả input và change event
-        function updateSpeed(e) {
-            speed = parseInt(e.target.value, 10);
-            speedValue.textContent = speed + 'ms';
-        }
+            function updateSpeed(e) {
+                speed = parseInt(e.target.value, 10);
+                speedValue.textContent = speed + 'ms';
+            }
 
-        speedSlider.addEventListener('input', updateSpeed);
-        speedSlider.addEventListener('change', updateSpeed);
+            speedSlider.addEventListener('input', updateSpeed);
+            speedSlider.addEventListener('change', updateSpeed);
 
-        // Chuyển đổi NodeList thành Array cho iOS cũ
-        var modeButtonsArray = Array.prototype.slice.call(modeButtons);
-        
-        modeButtonsArray.forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                modeButtonsArray.forEach(function(b) {
-                    b.classList.remove('active');
+            var modeButtonsArray = Array.prototype.slice.call(modeButtons);
+            
+            modeButtonsArray.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    modeButtonsArray.forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    btn.classList.add('active');
+                    mode = btn.getAttribute('data-mode');
                 });
-                btn.classList.add('active');
-                mode = btn.getAttribute('data-mode');
             });
-        });
 
-        startBtn.addEventListener('click', function() {
-            settings.style.display = 'none';
-            lights.style.display = 'block';
-            stopBtn.style.display = 'flex';
-            startLights();
-        });
+            startBtn.addEventListener('click', function() {
+                settings.style.display = 'none';
+                lights.style.display = 'block';
+                stopBtn.style.display = 'flex';
+                startLights();
+            });
 
-        stopBtn.addEventListener('click', function() {
-            stopLights();
-            lights.style.display = 'none';
-            stopBtn.style.display = 'none';
-            settings.style.display = 'flex';
-            leftLight.classList.remove('light-off');
-            rightLight.classList.remove('light-off');
-        });
+            stopBtn.addEventListener('click', function() {
+                stopLights();
+                lights.style.display = 'none';
+                stopBtn.style.display = 'none';
+                settings.style.display = 'flex';
+                leftLight.classList.remove('light-off');
+                rightLight.classList.remove('light-off');
+            });
 
-        // Fullscreen với hỗ trợ đa trình duyệt và iOS
-        fullscreenBtn.addEventListener('click', function() {
-            var doc = document.documentElement;
-            var isFullscreen = document.fullscreenElement || 
-                              document.webkitFullscreenElement || 
-                              document.mozFullScreenElement || 
-                              document.msFullscreenElement;
-            
-            if (!isFullscreen) {
-                if (doc.requestFullscreen) {
-                    doc.requestFullscreen();
-                } else if (doc.webkitRequestFullscreen) {
-                    doc.webkitRequestFullscreen();
-                } else if (doc.webkitRequestFullScreen) {
-                    doc.webkitRequestFullScreen();
-                } else if (doc.mozRequestFullScreen) {
-                    doc.mozRequestFullScreen();
-                } else if (doc.msRequestFullscreen) {
-                    doc.msRequestFullscreen();
-                }
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.webkitCancelFullScreen) {
-                    document.webkitCancelFullScreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-            }
-        });
-
-        // Lắng nghe tất cả các event fullscreen
-        function updateFullscreenButton() {
-            var isFullscreen = document.fullscreenElement || 
-                              document.webkitFullscreenElement || 
-                              document.mozFullScreenElement || 
-                              document.msFullscreenElement;
-            
-            fullscreenBtn.textContent = isFullscreen ? '✕' : '⛶';
-        }
-
-        document.addEventListener('fullscreenchange', updateFullscreenButton);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-        document.addEventListener('mozfullscreenchange', updateFullscreenButton);
-        document.addEventListener('MSFullscreenChange', updateFullscreenButton);
-
-        function startLights() {
-            if (mode === 'alternate') {
-                interval = setInterval(function() {
-                    if (isLeftOn) {
-                        leftLight.classList.remove('light-off');
-                        rightLight.classList.add('light-off');
-                    } else {
-                        leftLight.classList.add('light-off');
-                        rightLight.classList.remove('light-off');
+            // Fullscreen với hỗ trợ đa trình duyệt và iOS
+            fullscreenBtn.addEventListener('click', function() {
+                var doc = document.documentElement;
+                var isFullscreen = document.fullscreenElement || 
+                                  document.webkitFullscreenElement || 
+                                  document.mozFullScreenElement || 
+                                  document.msFullscreenElement;
+                
+                if (!isFullscreen) {
+                    if (doc.requestFullscreen) {
+                        doc.requestFullscreen();
+                    } else if (doc.webkitRequestFullscreen) {
+                        doc.webkitRequestFullscreen();
+                    } else if (doc.webkitRequestFullScreen) {
+                        doc.webkitRequestFullScreen();
+                    } else if (doc.mozRequestFullScreen) {
+                        doc.mozRequestFullScreen();
+                    } else if (doc.msRequestFullscreen) {
+                        doc.msRequestFullscreen();
                     }
-                    isLeftOn = !isLeftOn;
-                }, speed);
-            } else {
-                interval = setInterval(function() {
-                    if (isLeftOn) {
-                        leftLight.classList.remove('light-off');
-                        rightLight.classList.remove('light-off');
-                    } else {
-                        leftLight.classList.add('light-off');
-                        rightLight.classList.add('light-off');
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.webkitCancelFullScreen) {
+                        document.webkitCancelFullScreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
                     }
-                    isLeftOn = !isLeftOn;
-                }, speed);
-            }
-        }
+                }
+            });
 
-        function stopLights() {
-            if (interval) {
-                clearInterval(interval);
-                interval = null;
+            function updateFullscreenButton() {
+                var isFullscreen = document.fullscreenElement || 
+                                  document.webkitFullscreenElement || 
+                                  document.mozFullScreenElement || 
+                                  document.msFullscreenElement;
+                
+                fullscreenBtn.textContent = isFullscreen ? '✕' : '⛶';
             }
-        }
 
-        // Ngăn chặn zoom khi double-tap trên iOS
-        var lastTouchEnd = 0;
-        document.addEventListener('touchend', function(event) {
-            var now = Date.now();
-            if (now - lastTouchEnd <= 300) {
-                event.preventDefault();
+            document.addEventListener('fullscreenchange', updateFullscreenButton);
+            document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+            document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+            document.addEventListener('MSFullscreenChange', updateFullscreenButton);
+
+            function startLights() {
+                if (mode === 'alternate') {
+                    interval = setInterval(function() {
+                        if (isLeftOn) {
+                            leftLight.classList.remove('light-off');
+                            rightLight.classList.add('light-off');
+                        } else {
+                            leftLight.classList.add('light-off');
+                            rightLight.classList.remove('light-off');
+                        }
+                        isLeftOn = !isLeftOn;
+                    }, speed);
+                } else {
+                    interval = setInterval(function() {
+                        if (isLeftOn) {
+                            leftLight.classList.remove('light-off');
+                            rightLight.classList.remove('light-off');
+                        } else {
+                            leftLight.classList.add('light-off');
+                            rightLight.classList.add('light-off');
+                        }
+                        isLeftOn = !isLeftOn;
+                    }, speed);
+                }
             }
-            lastTouchEnd = now;
-        }, false);
-    })();
-</script>
-```
 
+            function stopLights() {
+                if (interval) {
+                    clearInterval(interval);
+                    interval = null;
+                }
+            }
+
+            // Ngăn chặn zoom khi double-tap trên iOS
+            var lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                var now = Date.now();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        })();
+    </script>
 </body>
 </html>
