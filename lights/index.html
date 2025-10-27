@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đèn Cảnh Sát</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        #settings {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .settings-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .setting-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+
+        .speed-value {
+            text-align: center;
+            margin-top: 8px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 15px;
+            border: 3px solid #ddd;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .mode-btn:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: transform 0.2s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        #lights {
+            display: none;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .light-container {
+            width: 100%;
+            height: 50%;
+            transition: opacity 0.1s;
+        }
+
+        #leftLight {
+            background-color: #ff0000;
+        }
+
+        #rightLight {
+            background-color: #0000ff;
+        }
+
+        .light-off {
+            opacity: 0.1 !important;
+        }
+
+        #stopBtn {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 40px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: 2px solid white;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            transition: all 0.3s;
+        }
+
+        #stopBtn:hover {
+            background: white;
+            color: black;
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        #fullscreenBtn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: 2px solid white;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        #fullscreenBtn:hover {
+            background: rgba(255,255,255,0.9);
+            color: black;
+            transform: scale(1.1);
+        }
+
+        #fullscreenBtn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <button id="fullscreenBtn" title="Fullscreen">⛶</button>
+
+    <div id="settings">
+        <div class="settings-box">
+            <h1>⚡ Đèn Cảnh Sát ⚡</h1>
+            
+            <div class="setting-group">
+                <label>Tốc độ chớp:</label>
+                <input type="range" id="speedSlider" min="50" max="1000" value="300" step="50">
+                <div class="speed-value" id="speedValue">300ms</div>
+            </div>
+
+            <div class="setting-group">
+                <label>Kiểu chớp:</label>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" data-mode="alternate">
+                        Qua lại<br>🔴🔵
+                    </button>
+                    <button class="mode-btn" data-mode="together">
+                        Cùng lúc<br>🔴🔵
+                    </button>
+                </div>
+            </div>
+
+            <button class="start-btn" id="startBtn">BẮT ĐẦU</button>
+        </div>
+    </div>
+
+    <div id="lights">
+        <div class="light-container" id="leftLight"></div>
+        <div class="light-container" id="rightLight"></div>
+    </div>
+
+    <button id="stopBtn">DỪNG LẠI</button>
+
+    <script>
+        let speed = 300;
+        let mode = 'alternate';
+        let interval;
+        let isLeftOn = true;
+
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const settings = document.getElementById('settings');
+        const lights = document.getElementById('lights');
+        const leftLight = document.getElementById('leftLight');
+        const rightLight = document.getElementById('rightLight');
+
+        speedSlider.addEventListener('input', (e) => {
+            speed = parseInt(e.target.value);
+            speedValue.textContent = speed + 'ms';
+        });
+
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                mode = btn.dataset.mode;
+            });
+        });
+
+        startBtn.addEventListener('click', () => {
+            settings.style.display = 'none';
+            lights.style.display = 'block';
+            stopBtn.style.display = 'block';
+            startLights();
+        });
+
+        stopBtn.addEventListener('click', () => {
+            stopLights();
+            lights.style.display = 'none';
+            stopBtn.style.display = 'none';
+            settings.style.display = 'flex';
+            leftLight.classList.remove('light-off');
+            rightLight.classList.remove('light-off');
+        });
+
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log('Không thể vào fullscreen:', err);
+                });
+                fullscreenBtn.textContent = '⛶';
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.textContent = '⛶';
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '✕';
+            } else {
+                fullscreenBtn.textContent = '⛶';
+            }
+        });
+
+        function startLights() {
+            if (mode === 'alternate') {
+                interval = setInterval(() => {
+                    if (isLeftOn) {
+                        leftLight.classList.remove('light-off');
+                        rightLight.classList.add('light-off');
+                    } else {
+                        leftLight.classList.add('light-off');
+                        rightLight.classList.remove('light-off');
+                    }
+                    isLeftOn = !isLeftOn;
+                }, speed);
+            } else {
+                interval = setInterval(() => {
+                    if (isLeftOn) {
+                        leftLight.classList.remove('light-off');
+                        rightLight.classList.remove('light-off');
+                    } else {
+                        leftLight.classList.add('light-off');
+                        rightLight.classList.add('light-off');
+                    }
+                    isLeftOn = !isLeftOn;
+                }, speed);
+            }
+        }
+
+        function stopLights() {
+            if (interval) {
+                clearInterval(interval);
+            }
+        }
+    </script>
+</body>
+</html>
